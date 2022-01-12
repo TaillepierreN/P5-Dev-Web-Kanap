@@ -68,12 +68,12 @@ function addToCart() {
         if (nbrArticle > 0 && choosenColor != null) {
 
             //verification si un panier existe deja,sinon creation du panier et de l'objet contenu
-            if (localStorage.getItem("storedcart") === null) {
+            if (localStorage.getItem("storedCart") === null) {
                 createItem();
             } else {
 
                 //récupération du panier existant
-                cart = JSON.parse(localStorage.getItem("storedcart"));
+                cart = JSON.parse(localStorage.getItem("storedCart"));
 
                 //vérification si le panier a deja un produit ayant la meme ID et couleur,si oui récupere l'index de l'objet
                 let currentArray = cart.findIndex(f => f._id === id && f.colors === choosenColor);
@@ -82,7 +82,7 @@ function addToCart() {
                     //rajoute la valeur numerique( parseInt transforme string en integer) du nombre d'article
                     // séléctioné avec le nombre d'article déja dans le panier
                     cart[currentArray].nbrArticle = parseInt(cart[currentArray].nbrArticle) + parseInt(nbrArticle);
-                    localStorage.setItem("storedcart", JSON.stringify(cart));
+                    localStorage.setItem("storedCart", JSON.stringify(cart));
                 } else {
                     //crée une nouvelle entrée dans l'array du panier
                     createItem();
@@ -116,6 +116,6 @@ function createItem(){
     }
     // push de l'objet dans l'array a mettre dans le panier
     cart.push(cartItem);
-    localStorage.setItem("storedcart", JSON.stringify(cart));
+    localStorage.setItem("storedCart", JSON.stringify(cart));
 }
 
