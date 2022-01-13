@@ -1,6 +1,9 @@
 let openedCart = JSON.parse(localStorage.getItem("storedCart"));
 const sectionItem = document.getElementById("cart__items");
-const firstLastnameRegex = /^[a-zA-Z]/;
+const firstLastnameRegex = /^(([A-za-z]+[\s]{1}[A-za-z]+)|([A-Za-z\-]+)){3,255}$/;
+const addressRegex = /[0-9]+(\s([a-zA-Z]+\s)+)[a-zA-Z]{3,255}$/i;
+const cityRegex = /^(([A-za-z]+[s]{1}[A-za-z]+)|([A-Za-z- ]+)){2,255}$/;
+const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 main();
 
@@ -29,23 +32,23 @@ function openCart() {
       productArticle.setAttribute("data-color", product.colors);
       productArticle.innerHTML = `
       <div class="cart__item__img">
-      <img src="${product.imageUrl}" alt="${product.altTxt}">
+           <img src="${product.imageUrl}" alt="${product.altTxt}">
       </div>
       <div class="cart__item__content">
-      <div class="cart__item__content__description">
-      <h2>${product.name}</h2>
-      <p>${product.colors}</p>
-      <p>${product.price}</p>
-      </div>
-      <div class="cart__item__content__settings">
-      <div class="cart__item__content__settings__quantity">
-      <p>Qté :</p>
-      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.nbrArticle}">
-      </div>
-      <div class="cart__item__content__settings__delete">
-      <p class="deleteItem">Supprimer</p>
-      </div>
-      </div>
+            <div class="cart__item__content__description">
+              <h2>${product.name}</h2>
+              <p>${product.colors}</p>
+              <p>${product.price}</p>
+            </div>
+            <div class="cart__item__content__settings">
+                  <div class="cart__item__content__settings__quantity">
+                      <p>Qté :</p>
+                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.nbrArticle}">
+                  </div>
+                  <div class="cart__item__content__settings__delete">
+                      <p class="deleteItem">Supprimer</p>
+                  </div>
+            </div>
       </div>`;
 
 
@@ -96,14 +99,44 @@ function changeQty() {
   }));
 }
 
-// document.querySelector("cart__order__form").addEventListener('submit',function(){
-//   const firstName = document.querySelector("#firstName")
-//   let messageErrFirst = document.getElementById('firstNameErrorMsg');
-//   const lastName = document.querySelector("#lasttName")
-//   let error = false;
-//   if(!firstLastnameRegex.test(firstName.value)){
-//     //  erreur a true et affichage erreur.
-//   }else {
-//     //suppr message d'erreur
-//   }
-// })
+let error = false;
+document.querySelector(".cart__order__form").addEventListener('submit',function(s){
+  s.preventDefault();
+  const firstName = document.getElementById("firstName");
+  let messageErrFirstName = document.getElementById('firstNameErrorMsg');
+  const lastName = document.getElementById("lastName");
+  let messageErrLastName = document.getElementById('lastNameErrorMsg');
+  let messageErrNameInner = 'Minimum 3 charactère.<br/>Ne doit contenir que des lettres minuscules ou majuscules.<br/>Les noms composé doivent être séparé par - ';
+  const address = document.getElementById('address');
+  let messageErrAddress = document.getElementById('addressErrorMsg');
+  let messageErrAddressInner = 'Minimum 3 charactère.<br/>Veuillez respecter le format adresse valide : 10 quai de la charente'
+  const city = document.getElementById('city');
+  let messageErrCity = document.getElementById('cityErrorMsg');
+  let messageErrCityInner = 'Minimum 3 charactère.<br/>Ne doit contenir que des lettres minuscules ou majuscules.'
+  const email = document.getElementById('email');
+  let messageErrEmail = document.getElementById('emailErrorMsg');
+  let messageErrEmailInner = 'Doit etre une adresse email valide : JeanDoe42@gmail.com'
+  // reset error pour nouvelle tentative
+  if(error = true){
+    error = false;
+  }
+  regextest(firstLastnameRegex,firstName,messageErrFirstName,messageErrNameInner);
+  regextest(firstLastnameRegex,lastName,messageErrLastName,messageErrNameInner);
+  regextest(addressRegex,address,messageErrAddress,messageErrAddressInner);
+  regextest(cityRegex,city,messageErrCity,messageErrCityInner);
+  regextest(emailRegex,email,messageErrEmail,messageErrEmailInner);
+
+  console.log('Status error: '+ error);
+})
+
+function regextest(regex,type,messErr,messErrInner){
+  if(regex.test(type.value)){
+    messErr.innerHTML = '';
+    console.log(type.value + ' valide')
+  }else {
+    console.log(type.value + ' invalide')
+    error = true;
+    console.log(error);
+    messErr.innerHTML = messErrInner;
+  }
+}
