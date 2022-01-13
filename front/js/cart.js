@@ -8,6 +8,7 @@ deleteFromCart();
 displayTotal();
 
 function openCart() {
+  if(openedCart != null){
     for (let product of openedCart) {
         let productArticle = document.createElement("article");
         // let productImg = document.createElement("img");
@@ -51,6 +52,7 @@ function openCart() {
         // productImg.src = product.imageUrl;
         // productImg.alt = product.altTxt
     }
+  }
 }
 
 function deleteFromCart() {
