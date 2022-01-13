@@ -1,19 +1,13 @@
-// import getProducts from "./server";
+// import getProducts from "./service";
 
 
 getProducts();
-
-let item = document.getElementById('items');
 
 
 function getProducts() {
     fetch("http://localhost:3000/api/products")
         .then(function (gotProducts) {
-            if (gotProducts.ok) {
-                return gotProducts.json();
-            } else {
-                console.log("Aucun produit reçu");
-            }
+            return gotProducts.json();
         })
         .catch((err) => {
             console.log(err);
@@ -27,6 +21,16 @@ function getProducts() {
             console.log(canapes);
             for (let canape of canapes){
                 
+                // let canapeLien = document.createElement("a");
+                // canapeLien.href = `./product.html?id=${canape._id}`;
+                // const articleTemplate = document.getElementById('articleTemplate');
+                // const article = document.createElement('article');
+                // article.content = document.importNode(articleTemplate.content, true);
+                // console.log(article);
+                // article.firstElementChild.querySelector('.productName').innerText = canape.name;
+                // canapeLien.appendChild('article');
+                // item.appendChild(canapeLien);
+
                 let canapeLien = document.createElement("a");
                 let canapeArticle = document.createElement("article");
                 let canapeImg = document.createElement("img");
@@ -35,7 +39,7 @@ function getProducts() {
 
                 // Ajout structure DOM
 
-                item.appendChild(canapeLien).appendChild(canapeArticle).appendChild(canapeImg);
+                document.getElementById('items').appendChild(canapeLien).appendChild(canapeArticle).appendChild(canapeImg);
                 canapeArticle.appendChild(canapeH3).classList.add("productName");
                 canapeArticle.appendChild(canapeP).classList.add("productDescription");
 
@@ -43,10 +47,9 @@ function getProducts() {
                 canapeLien.href = `./product.html?id=${canape._id}`;
                 canapeImg.src = canape.imageUrl;
                 canapeImg.alt = canape.altTxt;
-                canapeH3.innerHTML = canape.name;
-                canapeP.innerHTML = canape.description;
+                canapeH3.innerText = canape.name;
+                canapeP.innerText = canape.description;
             }
         })
 };
 
-//apparement l'utilisation du innerHTML est parfois refusée en soutenance, d'après un autre apprenant
