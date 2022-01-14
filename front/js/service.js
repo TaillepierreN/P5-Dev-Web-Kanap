@@ -2,33 +2,40 @@
 
 export function getProducts() {
     fetch("http://localhost:3000/api/products")
-        .then(function(gotProducts) {
-            if(gotProducts.ok){
-                return gotProducts.json();
-            } else{
-                console.log("Aucun produit reçu");
-            }
+        .then(function (gotProducts) {
+            return gotProducts.json();
         })
-        .catch((err) =>{
+        .catch((err) => {
             console.log(err);
         })
 }
 
-function getProduct(id){
-    fetch("http://localhost:3000/api/products"+ "/" + id)
-    .then(function(gotProduct){
-        if(gotProduct.ok){
+export function getProduct(id) {
+    fetch("http://localhost:3000/api/products" + "/" + id)
+        .then(function (gotProduct) {
             return gotProduct.json();
-        } else {
-            console.log("aucun produit reçu")
-        }
-    })
-    .catch((err) =>{
-        console.log(err);
-    })
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 
 }
 
-// module.exports = {
-//     getProducts: getProducts,
-// };
+export function order(sentOrder) {
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(sentOrder),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    };
+    fetch("http://localhost:3000/api/products/order", options)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // localStorage.removeItem("storedCart");
+            localStorage.setItem('orderId', data.orderId)
+            document.location.href = 'confirmation.html?id=' + data.orderId;
+        })
+}
