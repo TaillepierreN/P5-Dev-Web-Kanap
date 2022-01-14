@@ -1,5 +1,6 @@
 let openedCart = JSON.parse(localStorage.getItem("storedCart"));
 const sectionItem = document.getElementById("cart__items");
+let error = false;
 const firstLastnameRegex = /^(([A-za-z]+[\s]{1}[A-za-z]+)|([A-Za-z\-]+)){3,255}$/;
 const addressRegex = /[0-9]+(\s([a-zA-Z]+\s)+)[a-zA-Z]{3,255}$/i;
 const cityRegex = /^(([A-za-z]+[s]{1}[A-za-z]+)|([A-Za-z- ]+)){2,255}$/;
@@ -13,7 +14,7 @@ function main() {
   changeQty();
 }
 
-
+//récupere et affiche les canapé dans le DOM ainsi que leur prix total
 function openCart() {
   if (openedCart.length) {
     sectionItem.innerHTML = ''
@@ -21,12 +22,8 @@ function openCart() {
     let totalProduct = 0;
     for (let product of openedCart) {
       let productArticle = document.createElement("article");
-      // let productImg = document.createElement("img");
-      // let productDiv = document.createElement("div");
-
 
       //Modification du DOM
-
       sectionItem.appendChild(productArticle).classList.add("cart__item");
       productArticle.setAttribute("data-id", product._id);
       productArticle.setAttribute("data-color", product.colors);
@@ -38,7 +35,7 @@ function openCart() {
             <div class="cart__item__content__description">
               <h2>${product.name}</h2>
               <p>${product.colors}</p>
-              <p>${product.price}</p>
+              <p>${product.price} €</p>
             </div>
             <div class="cart__item__content__settings">
                   <div class="cart__item__content__settings__quantity">
@@ -51,23 +48,16 @@ function openCart() {
             </div>
       </div>`;
 
-
       totalPrice = totalPrice + (parseInt(product.price) * parseInt(product.nbrArticle));
       totalProduct = totalProduct + parseInt(product.nbrArticle)
       document.getElementById('totalQuantity').innerText = totalProduct;
       document.getElementById('totalPrice').innerText = totalPrice;
 
-
-
-      // productArticle.appendChild(productDiv).classList.add('cart__item__img');
-      // document.querySelector('.cart__item__img').appendChild(productImg);
-      // productArticle.appendChild(productDiv).classList.add("cart__item__content");
-      // productImg.src = product.imageUrl;
-      // productImg.alt = product.altTxt
     }
   }
 }
 
+// enleve un canapé du panier
 function deleteFromCart() {
   let delBtn = document.querySelectorAll('.deleteItem');
   delBtn.forEach(btn => btn.addEventListener('click', function (event) {
@@ -82,7 +72,7 @@ function deleteFromCart() {
 
 }
 
-
+// change la quantité de canapé dans le panier
 function changeQty() {
   let inputsQuantity = document.querySelectorAll(".cart__item__content__settings input");
   inputsQuantity.forEach(changePrice => changePrice.addEventListener('change', function (e) {
@@ -99,44 +89,84 @@ function changeQty() {
   }));
 }
 
-let error = false;
-document.querySelector(".cart__order__form").addEventListener('submit',function(s){
+// Check form quand bouton submit est utilisé
+document.querySelector(".cart__order__form").addEventListener('submit', function (s) {
   s.preventDefault();
+
   const firstName = document.getElementById("firstName");
   let messageErrFirstName = document.getElementById('firstNameErrorMsg');
   const lastName = document.getElementById("lastName");
   let messageErrLastName = document.getElementById('lastNameErrorMsg');
   let messageErrNameInner = 'Minimum 3 charactère.<br/>Ne doit contenir que des lettres minuscules ou majuscules.<br/>Les noms composé doivent être séparé par - ';
+
   const address = document.getElementById('address');
   let messageErrAddress = document.getElementById('addressErrorMsg');
   let messageErrAddressInner = 'Minimum 3 charactère.<br/>Veuillez respecter le format adresse valide : 10 quai de la charente'
+
   const city = document.getElementById('city');
   let messageErrCity = document.getElementById('cityErrorMsg');
   let messageErrCityInner = 'Minimum 3 charactère.<br/>Ne doit contenir que des lettres minuscules ou majuscules.'
+
   const email = document.getElementById('email');
   let messageErrEmail = document.getElementById('emailErrorMsg');
   let messageErrEmailInner = 'Doit etre une adresse email valide : JeanDoe42@gmail.com'
   // reset error pour nouvelle tentative
-  if(error = true){
+  if (error = true) {
     error = false;
   }
-  regextest(firstLastnameRegex,firstName,messageErrFirstName,messageErrNameInner);
-  regextest(firstLastnameRegex,lastName,messageErrLastName,messageErrNameInner);
-  regextest(addressRegex,address,messageErrAddress,messageErrAddressInner);
-  regextest(cityRegex,city,messageErrCity,messageErrCityInner);
-  regextest(emailRegex,email,messageErrEmail,messageErrEmailInner);
+  //test chaque champ avec son regex
+  regextest(firstLastnameRegex, firstName, messageErrFirstName, messageErrNameInner);
+  regextest(firstLastnameRegex, lastName, messageErrLastName, messageErrNameInner);
+  regextest(addressRegex, address, messageErrAddress, messageErrAddressInner);
+  regextest(cityRegex, city, messageErrCity, messageErrCityInner);
+  regextest(emailRegex, email, messageErrEmail, messageErrEmailInner)
+  console.log('Status error: ' + error)
 
-  console.log('Status error: '+ error);
+  if (!error) {
+    const commande = {
+      contact: {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      },
+      products: openedCart,
+    }
+    postCommande(commande);
+    console.log(JSON.stringify(commande));
+  }
+
+
 })
 
-function regextest(regex,type,messErr,messErrInner){
-  if(regex.test(type.value)){
+// fonction de test regex
+function regextest(regex, type, messErr, messErrInner) {
+  if (regex.test(type.value) && type.value) {
     messErr.innerHTML = '';
-    console.log(type.value + ' valide')
-  }else {
-    console.log(type.value + ' invalide')
+  } else {
     error = true;
-    console.log(error);
     messErr.innerHTML = messErrInner;
   }
+}
+
+
+
+function postCommande(sentOrder) {
+
+  const options = {
+    method: 'POST',
+    body: JSON.stringify(sentOrder),
+    headers: {
+      'Accept': 'application/json', 
+      'Content-Type': 'application/json',
+    }
+  };
+
+  fetch("http://localhost:3000/api/products/order", options)
+  .then(response => response.json())
+  .then(data =>{
+    console.log(data);
+  })
+
 }
