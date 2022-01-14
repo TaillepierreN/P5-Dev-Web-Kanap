@@ -2,7 +2,7 @@ let openedCart = JSON.parse(localStorage.getItem("storedCart"));
 const sectionItem = document.getElementById("cart__items");
 let error = false;
 const firstLastnameRegex = /^(([A-za-z]+[\s]{1}[A-za-z]+)|([A-Za-z\-]+)){3,255}$/;
-const addressRegex = /[0-9]+(\s([a-zA-Z]+\s)+)[a-zA-Z]{3,255}$/i;
+const addressRegex = /([A-Z0-9]{2}|  )/i;
 const cityRegex = /^(([A-za-z]+[s]{1}[A-za-z]+)|([A-Za-z- ]+)){2,255}$/;
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -123,18 +123,26 @@ document.querySelector(".cart__order__form").addEventListener('submit', function
   console.log('Status error: ' + error)
 
   if (!error) {
-    const commande = {
-      contact: {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value
-      },
-      products: openedCart,
+
+    let contact = {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value
     }
-    postCommande(commande);
-    console.log(JSON.stringify(commande));
+    let products = [];
+    for (let i = 0; i<openedCart.length; i++){
+      products.push(openedCart[i]._id);
+    }
+    console.log(products);
+    const commande = {
+      contact,
+      products
+    }
+    console.log(commande);
+    order(commande);
+    console.log("le stringify commande " + JSON.stringify(commande));
   }
 
 
@@ -152,8 +160,7 @@ function regextest(regex, type, messErr, messErrInner) {
 
 
 
-function postCommande(sentOrder) {
-
+function order(sentOrder) {
   const options = {
     method: 'POST',
     body: JSON.stringify(sentOrder),
@@ -167,6 +174,8 @@ function postCommande(sentOrder) {
   .then(response => response.json())
   .then(data =>{
     console.log(data);
+    localStorage.removeItem("storedCart");
+    document.location.href = 'confirmation.html?id=' + data.orderId;
   })
 
 }
