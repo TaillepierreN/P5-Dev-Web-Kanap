@@ -39,12 +39,6 @@ function getProduct() {
                 difoption.value = canapColor;
                 difoption.innerText = canapColor;
             }
-            // canapColors.forEach(color => {
-            //     let difoption = document.createElement("option");
-            //     document.getElementById("colors").appendChild(difoption);
-            //     difoption.value = color;
-            //     difoption.innerHTML = color;
-            // });
         })
 };
 
@@ -84,8 +78,6 @@ addToCartBtn.addEventListener("click", function () {
         }
     }
 });
-
-
 
 //Fonction appelée lors de la création d'objet dans le panier
 

@@ -30,12 +30,12 @@ export function order(sentOrder) {
             'Content-Type': 'application/json',
         }
     };
+
     fetch("http://localhost:3000/api/products/order", options)
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            // localStorage.removeItem("storedCart");
-            localStorage.setItem('orderId', data.orderId)
+            localStorage.removeItem("storedCart");
             document.location.href = 'confirmation.html?id=' + data.orderId;
         })
 }

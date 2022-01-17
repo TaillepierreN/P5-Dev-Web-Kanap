@@ -19,17 +19,7 @@ function getProducts() {
         .then(function (gotCanape) {
             const canapes = gotCanape;
             console.log(canapes);
-            for (let canape of canapes){
-                
-                // let canapeLien = document.createElement("a");
-                // canapeLien.href = `./product.html?id=${canape._id}`;
-                // const articleTemplate = document.getElementById('articleTemplate');
-                // const article = document.createElement('article');
-                // article.content = document.importNode(articleTemplate.content, true);
-                // console.log(article);
-                // article.firstElementChild.querySelector('.productName').innerText = canape.name;
-                // canapeLien.appendChild('article');
-                // item.appendChild(canapeLien);
+            for (let canape of canapes) {
 
                 let canapeLien = document.createElement("a");
                 let canapeArticle = document.createElement("article");
@@ -52,4 +42,3 @@ function getProducts() {
             }
         })
 };
-
