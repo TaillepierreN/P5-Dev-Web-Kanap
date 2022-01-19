@@ -25,7 +25,6 @@ function openCart() {
   if (openedCart != null) {
     let totalPrice = 0;
     let totalProduct = 0;
-    console.log("fiesta")
     for (let product of openedCart) {
       let productArticle = document.createElement("article");
       let cartItmImg = document.createElement("div");
@@ -36,38 +35,49 @@ function openCart() {
       let itemQuantity = document.createElement("input")
       let cartItemContentSetDel = document.createElement("div");
       let cartItemContentSetDelP = document.createElement("p");
-
+      
       //Modification du DOM
       sectionItem.appendChild(productArticle).classList.add("cart__item");
       productArticle.setAttribute("data-id", product._id);
       productArticle.setAttribute("data-color", product.colors);
-
+      
       productArticle.appendChild(cartItmImg).classList.add("cart__item__img");
       cartItmImg.appendChild(document.createElement('img'));
       cartItmImg.firstChild.src = product.imageUrl;
       cartItmImg.firstChild.alt = product.altTxt;
-
+      
       productArticle.appendChild(cartItemContent).classList.add("cart__item__content");
       cartItemContent.appendChild(cartItemContentDesc).classList.add("cart__item__content__description");
       cartItemContentDesc.appendChild(document.createElement('h2')).innerText = product.name;
       cartItemContentDesc.appendChild(document.createElement('p')).innerText = product.colors;
-      cartItemContentDesc.appendChild(document.createElement('p')).innerText = product.price + " €";
-
-      cartItemContent.appendChild(cartItemContentSet).classList.add("cart__item__content__settings");
-      cartItemContentSet.appendChild(cartItemContentSetQty).classList.add("cart__item__content__settings__quantity");
-      cartItemContentSetQty.appendChild(document.createElement('p')).innerText = 'Qté : '
-      cartItemContentSetQty.appendChild(itemQuantity).classList.add("itemQuantity");
-      itemQuantity.type = "number";
-      itemQuantity.name = "itemQuantity";
-      itemQuantity.min = "1"
-      itemQuantity.max = "100";
-      itemQuantity.value = product.nbrArticle;
-
-      cartItemContentSet.appendChild(cartItemContentSetDel).classList.add("cart__item__content__settings__delete");
-      cartItemContentSetDel.appendChild(cartItemContentSetDelP).classList.add("deleteItem");
-      cartItemContentSetDelP.innerText = "Supprimer";
-
-
+      
+      // récuperation + affichage du prix
+      fetch("http://localhost:3000/api/products" + "/" + product._id)
+      .then(response => response.json())
+      .then(data => {
+      cartItemContentDesc.appendChild(document.createElement('p')).innerText = data.price + " €";
+      totalPrice = totalPrice + (parseInt(data.price) * parseInt(product.nbrArticle));
+        totalProduct = totalProduct + parseInt(product.nbrArticle)
+        TotQty.innerText = totalProduct;
+        TotPri.innerText = totalPrice;
+      })
+      //
+        
+        cartItemContent.appendChild(cartItemContentSet).classList.add("cart__item__content__settings");
+        cartItemContentSet.appendChild(cartItemContentSetQty).classList.add("cart__item__content__settings__quantity");
+        cartItemContentSetQty.appendChild(document.createElement('p')).innerText = 'Qté : '
+        cartItemContentSetQty.appendChild(itemQuantity).classList.add("itemQuantity");
+        itemQuantity.type = "number";
+        itemQuantity.name = "itemQuantity";
+        itemQuantity.min = "1"
+        itemQuantity.max = "100";
+        itemQuantity.value = product.nbrArticle;
+        
+        cartItemContentSet.appendChild(cartItemContentSetDel).classList.add("cart__item__content__settings__delete");
+        cartItemContentSetDel.appendChild(cartItemContentSetDelP).classList.add("deleteItem");
+        cartItemContentSetDelP.innerText = "Supprimer";
+      
+      
       // productArticle.innerHTML = `
       // <div class="cart__item__img">
       //      <img src="${product.imageUrl}" alt="${product.altTxt}">
@@ -88,14 +98,10 @@ function openCart() {
       //             </div>
       //       </div>
       // </div>`;
-
-
+      
+      
       // calcule et affiche le prix et nombre d'article total
-      totalPrice = totalPrice + (parseInt(product.price) * parseInt(product.nbrArticle));
-      totalProduct = totalProduct + parseInt(product.nbrArticle)
-      TotQty.innerText = totalProduct;
-      TotPri.innerText = totalPrice;
-
+      
     }
   }
 }

@@ -91,7 +91,7 @@ function createItem() {
         _id: id,
         colors: choosenColor,
         name: DOMtitle.innerHTML,
-        price: DOMprice.innerHTML,
+        // price: DOMprice.innerHTML,
         imageUrl: DOMimg.src,
         description: DOMdesc.innerHTML,
         altTxt: DOMimg.alt,
