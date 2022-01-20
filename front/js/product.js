@@ -6,6 +6,7 @@ let DOMdesc = document.getElementById('description');
 let DOMcolors = document.getElementById("colors");
 let cartItem = {};
 let cart = [];
+let notFound = false
 
 getProduct();
 
@@ -14,32 +15,52 @@ getProduct();
 function getProduct() {
     fetch("http://localhost:3000/api/products/" + id)
         .then(function (gotProduct) {
-            return gotProduct.json();
+            if(gotProduct.ok){
+                return gotProduct.json();
+            }else{
+                notFound = true;
+                return notFound;
+            }
         })
         .catch((err) => {
             console.log(err);
+
         })
 
         // modification du DOM avec les donnée du back
         .then(function (gotCanape) {
-
-            let canapeimg = document.createElement("img");
-            let canapColors = gotCanape.colors;
-
-            document.querySelector(".item__img").appendChild(canapeimg).src = gotCanape.imageUrl;
-            canapeimg.id = "canapimg";
-            canapeimg.alt = gotCanape.altTxt;
-            DOMtitle.innerText = gotCanape.name;
-            DOMprice.innerText = gotCanape.price;
-            DOMdesc.innerText = gotCanape.description;
-
-            for (let canapColor of canapColors) {
-                let difoption = document.createElement("option");
-                DOMcolors.appendChild(difoption);
-                difoption.value = canapColor;
-                difoption.innerText = canapColor;
-            }
-        })
+                if(!notFound){
+                    let canapeimg = document.createElement("img");
+                    let canapColors = gotCanape.colors;
+                    
+                    document.querySelector(".item__img").appendChild(canapeimg).src = gotCanape.imageUrl;
+                    canapeimg.id = "canapimg";
+                    canapeimg.alt = gotCanape.altTxt;
+                    DOMtitle.innerText = gotCanape.name;
+                    DOMprice.innerText = gotCanape.price;
+                    DOMdesc.innerText = gotCanape.description;
+                    
+                    for (let canapColor of canapColors) {
+                        let difoption = document.createElement("option");
+                        DOMcolors.appendChild(difoption);
+                        difoption.value = canapColor;
+                        difoption.innerText = canapColor;
+                    }
+                }else{
+                    //si produit n'existe pas,refais la page
+                    document.querySelector('.item').innerHTML = "";
+                    document.querySelector('.item').appendChild(document.createElement("div")).classList.add("item__content");
+                    document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__titlePrice");
+                    document.querySelector('.item__content__titlePrice').appendChild(document.createElement("h1")).id = "title";
+                    document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__addButton");
+                    document.querySelector('.item__content__addButton').appendChild(document.createElement("a")).id = "backmenu";
+                    document.getElementById("backmenu").appendChild(document.createElement("button")).id = "addToCart";
+                    document.getElementById('title').innerText = "Produit non existant";
+                    document.getElementById('addToCart').innerText = "Retour a l'acceuil";
+                    document.getElementById('backmenu').href ="http://127.0.0.1:5500/front/html/index.html"; 
+                }
+                    
+                })
 };
 
 //function lancé au click bouton "ajout au panier"
