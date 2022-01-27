@@ -1,4 +1,5 @@
-const id = document.URL.split("=").pop();
+const urlSearchParams = new URLSearchParams(window.location.search);
+const id = urlSearchParams.get("id")
 const addToCartBtn = document.getElementById('addToCart');
 let DOMtitle = document.getElementById('title');
 let DOMprice = document.getElementById('price');
@@ -15,9 +16,9 @@ getProduct();
 function getProduct() {
     fetch("http://localhost:3000/api/products/" + id)
         .then(function (gotProduct) {
-            if(gotProduct.ok){
+            if (gotProduct.ok) {
                 return gotProduct.json();
-            }else{
+            } else {
                 notFound = true;
                 return notFound;
             }
@@ -29,38 +30,38 @@ function getProduct() {
 
         // modification du DOM avec les donnée du back
         .then(function (gotCanape) {
-                if(!notFound){
-                    let canapeimg = document.createElement("img");
-                    let canapColors = gotCanape.colors;
-                    
-                    document.querySelector(".item__img").appendChild(canapeimg).src = gotCanape.imageUrl;
-                    canapeimg.id = "canapimg";
-                    canapeimg.alt = gotCanape.altTxt;
-                    DOMtitle.innerText = gotCanape.name;
-                    DOMprice.innerText = gotCanape.price;
-                    DOMdesc.innerText = gotCanape.description;
-                    
-                    for (let canapColor of canapColors) {
-                        let difoption = document.createElement("option");
-                        DOMcolors.appendChild(difoption);
-                        difoption.value = canapColor;
-                        difoption.innerText = canapColor;
-                    }
-                }else{
-                    //si produit n'existe pas,refais la page
-                    document.querySelector('.item').innerHTML = "";
-                    document.querySelector('.item').appendChild(document.createElement("div")).classList.add("item__content");
-                    document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__titlePrice");
-                    document.querySelector('.item__content__titlePrice').appendChild(document.createElement("h1")).id = "title";
-                    document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__addButton");
-                    document.querySelector('.item__content__addButton').appendChild(document.createElement("a")).id = "backmenu";
-                    document.getElementById("backmenu").appendChild(document.createElement("button")).id = "addToCart";
-                    document.getElementById('title').innerText = "Produit non existant";
-                    document.getElementById('addToCart').innerText = "Retour a l'acceuil";
-                    document.getElementById('backmenu').href ="http://127.0.0.1:5500/front/html/index.html"; 
+            if (!notFound) {
+                let canapeimg = document.createElement("img");
+                let canapColors = gotCanape.colors;
+
+                document.querySelector(".item__img").appendChild(canapeimg).src = gotCanape.imageUrl;
+                canapeimg.id = "canapimg";
+                canapeimg.alt = gotCanape.altTxt;
+                DOMtitle.innerText = gotCanape.name;
+                DOMprice.innerText = gotCanape.price;
+                DOMdesc.innerText = gotCanape.description;
+
+                for (let canapColor of canapColors) {
+                    let difoption = document.createElement("option");
+                    DOMcolors.appendChild(difoption);
+                    difoption.value = canapColor;
+                    difoption.innerText = canapColor;
                 }
-                    
-                })
+            } else {
+                //si produit n'existe pas,refais la page
+                document.querySelector('.item').innerHTML = "";
+                document.querySelector('.item').appendChild(document.createElement("div")).classList.add("item__content");
+                document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__titlePrice");
+                document.querySelector('.item__content__titlePrice').appendChild(document.createElement("h1")).id = "title";
+                document.querySelector('.item__content').appendChild(document.createElement("div")).classList.add("item__content__addButton");
+                document.querySelector('.item__content__addButton').appendChild(document.createElement("a")).id = "backmenu";
+                document.getElementById("backmenu").appendChild(document.createElement("button")).id = "addToCart";
+                document.getElementById('title').innerText = "Produit non existant";
+                document.getElementById('addToCart').innerText = "Retour a l'acceuil";
+                document.getElementById('backmenu').href = "http://127.0.0.1:5500/front/html/index.html";
+            }
+
+        })
 };
 
 //function lancé au click bouton "ajout au panier"
@@ -91,6 +92,8 @@ addToCartBtn.addEventListener("click", function () {
                 // séléctioné avec le nombre d'article déja dans le panier
                 cart[currentArray].nbrArticle = parseInt(cart[currentArray].nbrArticle) + parseInt(nbrArticle);
                 localStorage.setItem("storedCart", JSON.stringify(cart));
+                alert(`${nbrArticle} produit ajouté a votre panier`);
+
             } else {
                 //crée une nouvelle entrée dans l'array du panier
                 createItem();
@@ -121,4 +124,5 @@ function createItem() {
     // push de l'objet dans l'array a mettre dans le panier
     cart.push(cartItem);
     localStorage.setItem("storedCart", JSON.stringify(cart));
+    alert(`${nbrArticle} produit ajouté a votre panier`);
 }
