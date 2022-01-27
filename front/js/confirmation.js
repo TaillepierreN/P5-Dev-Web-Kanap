@@ -1,7 +1,13 @@
-const idOrder = document.URL.split("=").pop();
+const urlSearchParams = new URLSearchParams(window.location.search);
+const idOrder = urlSearchParams.get("id")
+
 main()
 
 //affiche l'id de commande
 function main(){
-    document.getElementById("orderId").innerText = idOrder;
+    if(idOrder){
+        document.getElementById("orderId").innerText = idOrder;
+    } else{
+        document.location.href= `../html/index.html`;
+    }
 }

@@ -22,7 +22,7 @@ function openCart() {
   sectionItem.innerHTML = ''
   TotQty.innerText = '';
   TotPri.innerText = '';
-  if (openedCart != null) {
+  if (openedCart.length >= 1) {
     let totalPrice = 0;
     let totalProduct = 0;
     for (let product of openedCart) {
@@ -35,74 +35,52 @@ function openCart() {
       let itemQuantity = document.createElement("input")
       let cartItemContentSetDel = document.createElement("div");
       let cartItemContentSetDelP = document.createElement("p");
-      
+
       //Modification du DOM
       sectionItem.appendChild(productArticle).classList.add("cart__item");
       productArticle.setAttribute("data-id", product._id);
       productArticle.setAttribute("data-color", product.colors);
-      
+
       productArticle.appendChild(cartItmImg).classList.add("cart__item__img");
       cartItmImg.appendChild(document.createElement('img'));
       cartItmImg.firstChild.src = product.imageUrl;
       cartItmImg.firstChild.alt = product.altTxt;
-      
+
       productArticle.appendChild(cartItemContent).classList.add("cart__item__content");
       cartItemContent.appendChild(cartItemContentDesc).classList.add("cart__item__content__description");
       cartItemContentDesc.appendChild(document.createElement('h2')).innerText = product.name;
       cartItemContentDesc.appendChild(document.createElement('p')).innerText = product.colors;
-      
+
       // récuperation + affichage du prix
       fetch("http://localhost:3000/api/products" + "/" + product._id)
-      .then(response => response.json())
-      .then(data => {
-      cartItemContentDesc.appendChild(document.createElement('p')).innerText = data.price + " €";
-      totalPrice = totalPrice + (parseInt(data.price) * parseInt(product.nbrArticle));
-        totalProduct = totalProduct + parseInt(product.nbrArticle)
-        TotQty.innerText = totalProduct;
-        TotPri.innerText = totalPrice;
-      })
+        .then(response => response.json())
+        .then(data => {
+          cartItemContentDesc.appendChild(document.createElement('p')).innerText = data.price + " €";
+          totalPrice = totalPrice + (parseInt(data.price) * parseInt(product.nbrArticle));
+          totalProduct = totalProduct + parseInt(product.nbrArticle)
+          TotQty.innerText = totalProduct;
+          TotPri.innerText = totalPrice;
+        })
       //
-        
-        cartItemContent.appendChild(cartItemContentSet).classList.add("cart__item__content__settings");
-        cartItemContentSet.appendChild(cartItemContentSetQty).classList.add("cart__item__content__settings__quantity");
-        cartItemContentSetQty.appendChild(document.createElement('p')).innerText = 'Qté : '
-        cartItemContentSetQty.appendChild(itemQuantity).classList.add("itemQuantity");
-        itemQuantity.type = "number";
-        itemQuantity.name = "itemQuantity";
-        itemQuantity.min = "1"
-        itemQuantity.max = "100";
-        itemQuantity.value = product.nbrArticle;
-        
-        cartItemContentSet.appendChild(cartItemContentSetDel).classList.add("cart__item__content__settings__delete");
-        cartItemContentSetDel.appendChild(cartItemContentSetDelP).classList.add("deleteItem");
-        cartItemContentSetDelP.innerText = "Supprimer";
-      
-      
-      // productArticle.innerHTML = `
-      // <div class="cart__item__img">
-      //      <img src="${product.imageUrl}" alt="${product.altTxt}">
-      // </div>
-      // <div class="cart__item__content">
-      //       <div class="cart__item__content__description">
-      //         <h2>${product.name}</h2>
-      //         <p>${product.colors}</p>
-      //         <p>${product.price} €</p>
-      //       </div>
-      //       <div class="cart__item__content__settings">
-      //             <div class="cart__item__content__settings__quantity">
-      //                 <p>Qté :</p>
-      //                 <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.nbrArticle}">
-      //             </div>
-      //             <div class="cart__item__content__settings__delete">
-      //                 <p class="deleteItem">Supprimer</p>
-      //             </div>
-      //       </div>
-      // </div>`;
-      
-      
-      // calcule et affiche le prix et nombre d'article total
-      
+
+      cartItemContent.appendChild(cartItemContentSet).classList.add("cart__item__content__settings");
+      cartItemContentSet.appendChild(cartItemContentSetQty).classList.add("cart__item__content__settings__quantity");
+      cartItemContentSetQty.appendChild(document.createElement('p')).innerText = 'Qté : '
+      cartItemContentSetQty.appendChild(itemQuantity).classList.add("itemQuantity");
+      itemQuantity.type = "number";
+      itemQuantity.name = "itemQuantity";
+      itemQuantity.min = "1"
+      itemQuantity.max = "100";
+      itemQuantity.value = product.nbrArticle;
+
+      cartItemContentSet.appendChild(cartItemContentSetDel).classList.add("cart__item__content__settings__delete");
+      cartItemContentSetDel.appendChild(cartItemContentSetDelP).classList.add("deleteItem");
+      cartItemContentSetDelP.innerText = "Supprimer";
+
+
     }
+  } else {
+    document.querySelector(".cartAndFormContainer h1").innerText = "Panier vide";
   }
 }
 
@@ -173,10 +151,10 @@ document.querySelector(".cart__order__form").addEventListener('submit', function
   regextest(addressRegex, address, messageErrAddress, messageErrAddressInner);
   regextest(cityRegex, city, messageErrCity, messageErrCityInner);
   regextest(emailRegex, email, messageErrEmail, messageErrEmailInner)
-  console.log('Status error: ' + error)
-  
-  if (openedCart != null) {
-    if (!error) {
+
+
+  if (!error) {
+    if (openedCart.length) {
 
       let contact = {
         firstName: firstName.value,
@@ -223,7 +201,6 @@ function order(sentOrder) {
   fetch("http://localhost:3000/api/products/order", options)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       localStorage.removeItem("storedCart");
       document.location.href = 'confirmation.html?id=' + data.orderId;
     })
