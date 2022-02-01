@@ -16,9 +16,9 @@ function main() {
   changeQty();
 }
 
-//récupere et affiche les canapé dans le DOM ainsi que leur prix total
+//récupere et affiche les produits dans le DOM ainsi que leur prix total
 function openCart() {
-  //remet a 0 les canapé et prix
+  //remet a 0 les produits et prix
   sectionItem.innerHTML = ''
   TotQty.innerText = '';
   TotPri.innerText = '';
@@ -84,7 +84,7 @@ function openCart() {
   }
 }
 
-// enleve un canapé du panier
+// enlever un produit du panier
 function deleteFromCart() {
   let delBtn = document.querySelectorAll('.deleteItem');
   delBtn.forEach(btn => btn.addEventListener('click', function (event) {
@@ -99,7 +99,7 @@ function deleteFromCart() {
 
 }
 
-// change la quantité de canapé dans le panier
+// changer la quantité d'un produit dans le panier
 function changeQty() {
   let inputsQuantity = document.querySelectorAll(".cart__item__content__settings input");
   inputsQuantity.forEach(changePrice => changePrice.addEventListener('change', function (e) {
@@ -119,7 +119,7 @@ function changeQty() {
   }));
 }
 
-// Check form quand bouton submit est utilisé
+// Vérifie le formulaire quand bouton submit est utilisé
 document.querySelector(".cart__order__form").addEventListener('submit', function (s) {
   s.preventDefault();
 

@@ -3,7 +3,9 @@
 
 getProducts();
 
-
+/**
+ * Fonction pour afficher tout les produits disponible
+ */
 function getProducts() {
     fetch("http://localhost:3000/api/products")
         .then(function (gotProducts) {

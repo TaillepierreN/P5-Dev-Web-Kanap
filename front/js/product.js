@@ -12,7 +12,7 @@ let notFound = false
 getProduct();
 
 
-//Recuperer les donné du back
+//Recuperer les donnée du produit en fonction de son ID
 function getProduct() {
     fetch("http://localhost:3000/api/products/" + id)
         .then(function (gotProduct) {
@@ -28,7 +28,7 @@ function getProduct() {
 
         })
 
-        // modification du DOM avec les donnée du back
+        // modification du DOM avec les donnée du produit
         .then(function (gotCanape) {
             if (!notFound) {
                 let canapeimg = document.createElement("img");
@@ -70,7 +70,7 @@ addToCartBtn.addEventListener("click", function () {
     let nbrArticle = document.getElementById('quantity').value;
     let choosenColor = DOMcolors.value;
 
-    //check si les valeurs ne sont pas vide pour eviter de lancer la fonction inutilement
+    //Vérifie si les valeurs ne sont pas vide pour eviter de lancer la fonction inutilement
     if (nbrArticle > 0 && choosenColor != null) {
 
         //verification si un panier existe deja,sinon creation du panier et de l'objet contenu
